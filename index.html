@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Fiza!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Orbitron:wght@500;700&family=Zen+Tokyo+Zoo&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE SETTINGS --- */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #020617; 
+            color: #ffffff;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            width: 100vw;
+            min-height: 100vh;
+            /* Custom glowing cursor */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 4px cyan);"><path d="M12 5v14M5 12h14"/></svg>') 12 12, auto;
+            touch-action: pan-y; /* Allow vertical scrolling */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- BACKGROUND SCENE (Anime Style) --- */
+        .bg-scene {
+            position: fixed;
+            top: -10%; /* Increased buffer for parallax */
+            left: -10%;
+            width: 120%; /* Increased buffer so edges don't show on resize */
+            height: 120%;
+            z-index: -3;
+            background: url('https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/background.jpg');
+            background-size: cover;
+            background-position: center;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.5); 
+            transition: transform 0.1s ease-out;
+            will-change: transform; 
+        }
+
+        /* Overlay to ensure text readability on bright backgrounds */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.8));
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* --- FOG PARALLAX LAYERS --- */
+        .fog-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .fog-layer {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            background-size: contain;
+            transition: transform 0.1s ease-out; /* For parallax */
+        }
+
+        .fog-1 {
+            z-index: 1;
+            opacity: 0.5;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+            animation: fogScroll 60s linear infinite;
+        }
+        
+        .fog-2 {
+            z-index: 2;
+            opacity: 0.3;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
+            animation: fogScroll 40s linear infinite reverse; /* Reverse flow for chaos */
+            margin-left: -50%;
+        }
+
+        @keyframes fogScroll {
+            0% { background-position: 0 0; }
+            100% { background-position: -200vw 0; }
+        }
+
+        /* --- INTERACTIVE EFFECTS --- */
+        /* Sword Slash */
+        .slash {
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px #0ea5e9;
+            pointer-events: none;
+            border-radius: 50%;
+            opacity: 1;
+            transform-origin: center;
+            z-index: 50;
+            mix-blend-mode: overlay;
+        }
+        @keyframes slashFade {
+            0% { width: 0; opacity: 1; }
+            50% { width: 250px; opacity: 1; }
+            100% { width: 300px; opacity: 0; transform: scale(1.5); }
+        }
+
+        /* Mist Burst */
+        .mist-burst {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(200,240,255,0) 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 49;
+        }
+        @keyframes burstExpand {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(8); opacity: 0; }
+        }
+
+        /* Glitch Text Effect */
+        .glitch-hover {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        .anime-title {
+            font-family: 'Permanent Marker', cursive;
+            color: #fff;
+            text-shadow: 3px 3px 0px #0284c7, 6px 6px 0px #000;
+        }
+        .anime-subtitle {
+            font-family: 'Zen Tokyo Zoo', cursive;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+        }
+        .text-body {
+            color: #f1f5f9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* Entry Overlay */
+        #entry-overlay {
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+        #entry-overlay.hidden-overlay {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 768px) {
+            .anime-title {
+                font-size: 3rem; 
+            }
+            .bg-scene {
+                /* Reduce parallax movement slightly on mobile */
+                top: -5%;
+                left: -5%;
+                width: 110%;
+                height: 110%;
+            }
+        }
+    </style>
+</head>
+<body onclick="createSlash(event)">
+
+    <!-- Audio Player -->
+    <audio id="bg-music" loop>
+        <source src="https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/song.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/music/preview/mixkit-cinematic-mystery-trailer-2793.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Visual Layer Stack -->
+    <div class="bg-scene" id="bg-scene"></div> 
+    <div class="bg-overlay"></div> 
+
+    <!-- Parallax Fog -->
+    <div class="fog-container">
+        <div class="fog-layer fog-1" id="fog-1"></div>
+        <div class="fog-layer fog-2" id="fog-2"></div>
+    </div>
+
+    <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- ENTRY OVERLAY -->
+    <div id="entry-overlay" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center text-center p-4">
+        <div class="relative group cursor-pointer" onclick="enterSite()">
+            <div class="absolute -inset-1 bg-gradient-to-r from-sky-400 to-blue-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
+            <button class="relative w-32 h-32 md:w-48 md:h-48 rounded-full bg-slate-800 border-4 border-sky-400 flex items-center justify-center overflow-hidden transform transition hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(56,189,248,0.5)]">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 md:h-24 md:w-24 text-sky-400 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
+        </div>
+        <h2 class="mt-8 text-3xl md:text-5xl anime-subtitle text-sky-300 animate-bounce">START MISSION</h2>
+        <p class="text-slate-400 mt-2 text-sm tracking-wider">Target: Ascho</p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" class="relative z-10 w-full h-screen overflow-y-auto overflow-x-hidden opacity-0 transition-opacity duration-1000">
+        
+        <header class="w-full p-6 flex justify-between items-center sticky top-0 z-40">
+            <h1 class="text-xl md:text-2xl font-bold text-sky-300 tracking-tighter drop-shadow-md bg-slate-900/40 px-3 py-1 rounded-lg backdrop-blur-sm border border-sky-500/30">
+                MIST HASHIRA // <span class="text-white glitch-hover" data-value="ASCHO" onmouseover="scrambleText(this)">ASCHO</span>
+            </h1>
+            <div class="hidden md:block text-xs font-bold text-white bg-sky-600/80 px-2 py-1 rounded">HAPPY BIRTHDAY FIZA</div>
+        </header>
+
+        <div class="w-full max-w-6xl mx-auto px-4 mt-8 md:mt-20 flex flex-col md:flex-row items-center gap-12 pb-20">
+            
+            <!-- Hero Image -->
+            <div class="w-full md:w-1/2 flex justify-center relative">
+                <div class="absolute inset-0 bg-sky-400/30 blur-[60px] rounded-full animate-pulse"></div>
+                <img src="https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/1" 
+                     onerror="this.src='https://i.pinimg.com/736x/87/07/73/870773d22b27a3c3167123951d8677c7.jpg'"
+                     alt="Muichiro Tokito" 
+                     class="relative z-10 w-full max-w-sm md:max-w-md object-cover rounded-lg border-2 border-white/20 shadow-[0_0_30px_rgba(56,189,248,0.6)] transform hover:scale-105 transition duration-500">
+            </div>
+
+            <!-- Text Content -->
+            <div class="w-full md:w-1/2 text-center md:text-left space-y-6">
+                <h1 class="text-4xl md:text-7xl anime-title transform -rotate-2 glitch-hover" data-value="HAPPY BIRTHDAY ASCHO!" onmouseover="scrambleText(this)">
+                    HAPPY<br>BIRTHDAY<br>ASCHO!
+                </h1>
+                <div class="backdrop-blur-md bg-slate-900/50 p-6 rounded-xl border-l-4 border-sky-400 shadow-lg">
+                    <p class="text-lg md:text-xl text-body leading-relaxed">
+                        "The mist clears to reveal the brightest sky."
+                    </p>
+                    <span class="text-sm text-sky-300 mt-2 block font-bold tracking-widest uppercase">- To the coolest Nakama</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Birthday Card -->
+        <div class="w-full px-4 pb-24 perspective-1000">
+            <div id="card" class="tilt-card mx-auto max-w-2xl bg-slate-900/70 backdrop-blur-xl border border-sky-500/40 p-8 md:p-12 rounded-3xl shadow-[0_0_60px_rgba(14,165,233,0.3)] relative overflow-hidden group">
+                
+                <div class="absolute top-0 right-0 p-4 opacity-40">
+                    <svg class="w-32 h-32 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.8L18.4 20H5.6L12 5.8z"/></svg>
+                </div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-4 mb-6 border-b border-sky-500/30 pb-4">
+                        <div class="h-14 w-14 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center font-bold text-white text-2xl shadow-lg border border-white/20">F</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-sky-200">Classified Mission</h3>
+                            <p class="text-xs text-sky-400 uppercase tracking-widest font-bold">Priority: Hashira Level</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl anime-subtitle mb-6 text-white">To: Fiza (Ascho)</h2>
+                    
+                    <div class="space-y-4 text-body leading-relaxed text-lg">
+                        <p>Yo Ascho! Wishing you a legendary birthday.</p>
+                        <p>May your year be filled with as much awesomeness as a perfectly animated fight scene. You're an awesome friend and a true Muichiro fan.</p>
+                        <p>Keep being your cool, chill self. Don't forget to eat some cake (or boiled radish with miso if you're feeling canon).</p>
+                    </div>
+                    
+                    <p class="mt-8 text-sky-300 font-bold text-xl tracking-wider animate-pulse text-shadow-sm">
+                        Happy Level Up Day! ⚔️
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="w-full max-w-5xl mx-auto px-4 pb-32">
+            <h3 class="text-3xl text-center anime-title mb-10">Mist Breathing: Seventh Form</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- GITHUB IMAGE 2 -->
+                <div class="aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white/10 hover:border-sky-400 transition-all duration-300 shadow-2xl group relative cursor-pointer bg-slate-900/50">
+                    <img src="https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/2" 
+                         onerror="this.src='https://i.pinimg.com/736x/21/df/b5/21dfb5c92471b69739420076a598a729.jpg'"
+                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 opacity-90 group-hover:opacity-100" alt="Muichiro Art">
+                    <div class="absolute bottom-0 left-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300 w-full bg-gradient-to-t from-black/80 to-transparent">
+                        <p class="text-sky-300 font-bold">Obscuring Clouds</p>
+                    </div>
+                </div>
+
+                <!-- GITHUB IMAGE 3 -->
+                <div class="aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white/10 hover:border-sky-400 transition-all duration-300 shadow-2xl group relative cursor-pointer md:-mt-12 bg-slate-900/50">
+                    <img src="https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/4" 
+                         onerror="this.src='https://i.pinimg.com/736x/85/3e/2d/853e2d6b2c2c9927692c81729068037c.jpg'"
+                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 opacity-90 group-hover:opacity-100" alt="Muichiro Art">
+                    <div class="absolute bottom-0 left-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300 w-full bg-gradient-to-t from-black/80 to-transparent">
+                        <p class="text-sky-300 font-bold">Sea of Clouds</p>
+                    </div>
+                </div>
+
+                <!-- GITHUB IMAGE 4 -->
+                <div class="aspect-[3/4] rounded-2xl overflow-hidden border-4 border-white/10 hover:border-sky-400 transition-all duration-300 shadow-2xl group relative cursor-pointer bg-slate-900/50">
+                    <img src="https://raw.githubusercontent.com/ItsMeHadi-bit/HBD_ascho/main/5" 
+                         onerror="this.src='https://i.pinimg.com/736x/07/35/66/073566a0122934ec7f0980c058721c0b.jpg'"
+                         class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 opacity-90 group-hover:opacity-100" alt="Muichiro Art">
+                    <div class="absolute bottom-0 left-0 p-4 translate-y-full group-hover:translate-y-0 transition duration-300 w-full bg-gradient-to-t from-black/80 to-transparent">
+                        <p class="text-sky-300 font-bold">Lunar Dispersing Mist</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-white/60 text-xs font-['Orbitron'] pb-8 font-bold tracking-widest">
+            CREATED FOR ASCHO // MIST BREATHING
+        </footer>
+    </div>
+
+    <script>
+        // 1. Enter Site & Play Music
+        function enterSite() {
+            const overlay = document.getElementById('entry-overlay');
+            const main = document.getElementById('main-content');
+            const audio = document.getElementById('bg-music');
+
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio waiting for interaction"));
+
+            overlay.classList.add('hidden-overlay');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                main.classList.remove('opacity-0');
+            }, 800);
+        }
+
+        // 2. Parallax Logic (Simplified & Robust)
+        
+        function updateInteractions(x, y) {
+            // PARALLAX EFFECTS
+            // Use window.innerWidth/Height to normalize values between -1 and 1 approx
+            const cx = window.innerWidth / 2;
+            const cy = window.innerHeight / 2;
+            
+            // Limit the parallax offset to prevent background edges from showing
+            const moveX = (cx - x) / 50; 
+            const moveY = (cy - y) / 50;
+            
+            // Apply to background scene
+            const bg = document.getElementById('bg-scene');
+            // Check if bg exists to avoid errors on some load states
+            if (bg) {
+                 bg.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+
+            // Move Fog Layers (Deep parallax)
+            const fog1 = document.getElementById('fog-1');
+            const fog2 = document.getElementById('fog-2');
+            if (fog1) fog1.style.transform = `translateX(${moveX * 2}px)`;
+            if (fog2) fog2.style.transform = `translateX(${moveX * 4}px)`;
+
+            // CARD TILT
+            const card = document.getElementById('card');
+            if (card) {
+                const rect = card.getBoundingClientRect();
+                // Only animate if element is roughly in view to save resources
+                if(rect.top < window.innerHeight && rect.bottom > 0) {
+                    const rotateX = (cy - y) / 25; // Decreased sensitivity
+                    const rotateY = (x - cx) / 25;
+                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                }
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('mousemove', (e) => {
+            updateInteractions(e.clientX, e.clientY);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                updateInteractions(e.touches[0].clientX, e.touches[0].clientY);
+                createSlash(e);
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                updateInteractions(e.touches[0].clientX, e.touches[0].clientY);
+                createSlash(e);
+            }
+        }, { passive: true });
+
+
+        // 3. Sword Slash & Mist Burst Effect
+        let lastSlashTime = 0;
+        function createSlash(e) {
+            const now = Date.now();
+            if (now - lastSlashTime < 40) return;
+            lastSlashTime = now;
+
+            // Safety check for target
+            if (e.target && e.target.tagName === 'BUTTON') return;
+
+            let x, y;
+            if (e.touches && e.touches.length > 0) {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            } else {
+                x = e.clientX;
+                y = e.clientY;
+            }
+
+            // A. Create Sword Slash
+            const slash = document.createElement('div');
+            slash.classList.add('slash');
+            const angle = Math.random() * 360;
+            slash.style.left = x + 'px';
+            slash.style.top = y + 'px';
+            slash.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+            slash.style.animation = 'slashFade 0.4s ease-out forwards';
+            document.body.appendChild(slash);
+
+            // B. Create Mist Burst (Cloud puff)
+            const burst = document.createElement('div');
+            burst.classList.add('mist-burst');
+            burst.style.left = x + 'px';
+            burst.style.top = y + 'px';
+            burst.style.animation = 'burstExpand 0.6s ease-out forwards';
+            document.body.appendChild(burst);
+
+            if (navigator.vibrate) navigator.vibrate(10);
+
+            setTimeout(() => {
+                if(slash && slash.parentNode) slash.remove();
+                if(burst && burst.parentNode) burst.remove();
+            }, 600);
+        }
+
+        // 4. Text Scramble Effect (Hacker/Anime Glitch)
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
+
+        function scrambleText(element) {
+            // Check if already animating to prevent stutter
+            if (element.dataset.animating === "true") return;
+            element.dataset.animating = "true";
+
+            let iteration = 0;
+            const originalText = element.dataset.value || element.innerText;
+            
+            // Clear any existing interval just in case
+            if (element.interval) clearInterval(element.interval);
+            
+            element.interval = setInterval(() => {
+                element.innerHTML = originalText
+                .split("")
+                .map((letter, index) => {
+                    if(index < iteration) {
+                        return originalText[index];
+                    }
+                    // Handle line breaks correctly
+                    if(originalText[index] === '\n' || originalText.substring(index, index+4) === '<br>') return originalText[index];
+                    return letters[Math.floor(Math.random() * letters.length)];
+                })
+                .join("");
+                
+                if(iteration >= originalText.length){ 
+                    clearInterval(element.interval);
+                    element.dataset.animating = "false";
+                }
+                
+                iteration += 1 / 3;
+            }, 30);
+        }
+
+        // 5. Background Particles
+        const particlesContainer = document.getElementById('particles');
+        if (particlesContainer) {
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 10 + Math.random() * 20 + 's';
+                particlesContainer.appendChild(p);
+            }
+        }
+    </script>
+</body>
+</html>
